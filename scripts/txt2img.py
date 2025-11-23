@@ -86,13 +86,13 @@ def load_replacement(x):
 
 
 def check_safety(x_image):
-    safety_checker_input = safety_feature_extractor(numpy_to_pil(x_image), return_tensors="pt")
-    x_checked_image, has_nsfw_concept = safety_checker(images=x_image, clip_input=safety_checker_input.pixel_values)
-    assert x_checked_image.shape[0] == len(has_nsfw_concept)
-    for i in range(len(has_nsfw_concept)):
-        if has_nsfw_concept[i]:
-            x_checked_image[i] = load_replacement(x_checked_image[i])
-    return x_checked_image, has_nsfw_concept
+    """
+    Bypass safety checker: return images as-is and mark all as safe.
+    x_image: numpy array, shape (N, H, W, C), values in [0, 1]
+    """
+    # Create a list of False flags (no NSFW detected)
+    has_nsfw_concept = [False] * len(x_image)
+    return x_image, has_nsfw_concept
 
 
 def main():
